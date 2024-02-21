@@ -160,7 +160,25 @@ class Dcgan(object):
         return y_hat
     
     
-    
+    def getDiscriminatorResults(self, x_input, keepRate, reuse=False):
+        
+        batchSize = tf.shape(x_input)[0]
+        inputMean = tf.reshape(tf.tile(tf.reduce_mean(x_input,0), [batchSize]), (batchSize, self.inputDim))
+        tempVec = tf.concat([x_input, inputMean], 1)
+        tempDim = self.inputDim * 2
+        #with tf.variable_scope('discriminator', reuse=reuse, regularizer=l2_regularizer(self.l2scale)):
+        for i, discDim in enumerate(self.discriminatorDims[:-1]):
+            
+            W = tf.get_variable('W_'+str(i), shape=[tempDim, discDim])
+            b = tf.get_variable('b_'+str(i), shape=[discDim])
+            h = self.discriminatorActivation(tf.add(tf.matmul(tempVec,W),b))
+            h = tf.nn.dropout(h, keepRate)
+            tempVec = h 
+            tempDim = discDim
+        W = tf.get_variable('W', shape=[tempDim, 1])
+        b = tf.get_variable('b', shape=[1])
+        y_hat = tf.squeeze(tf.nn.sigmoid(tf.add(tf.matmul(tempVec, W), b)))
+        return y_hat
     
     def buildDiscriminator(self, x_real, x_fake, keepRate, decodeVariables, bn_train):
         #Discriminate for real samples

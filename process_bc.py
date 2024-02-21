@@ -74,6 +74,7 @@ if __name__ == '__main__':
 
     # Convert Diagnosis column to binary (0 for Benign, 1 for Malignant)
     df['Diagnosis'] = df['Diagnosis'].map({'M': 1, 'B': 0})
+    
 
     # Output files
     outFile = sys.argv[1]
