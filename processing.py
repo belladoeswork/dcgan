@@ -29,11 +29,11 @@ feature_range = {
 'near_pCR': (0, 1),
 'RFS': (0, 1),
 'DFS': (0, 1),
-'OS': (0, 1),
+# 'OS': (0, 1),
 'metastasis': (0, 1),
 'metastasis_months': (1, 35),
 'dead': (0, 1),
-'died_from_cancer_if_dead': (0, 1),
+# 'died_from_cancer_if_dead': (0, 1),
 'age': (24, 92),
 'ER_preTrt': (0, 1),
 'ER_fmolmg_preTrt': (0, 620),
@@ -163,8 +163,8 @@ treats = [(H1), (H2), (H3)]
 pred = [([A1], H1 + [A1]), ([A2], H2 + [A2]), ([A3], H3 + [A3])]
 
 # columns to preprocess if the goal of the preprocessing is prediction
-def rescale(data, data_range, scale_range):
-    return ((data - data_range[0]) / (data_range[1] - data_range[0])) * (scale_range[1] - scale_range[0]) + scale_range[0]
+# def rescale(data, data_range, scale_range):
+#     return ((data - data_range[0]) / (data_range[1] - data_range[0])) * (scale_range[1] - scale_range[0]) + scale_range[0]
 
 
 
@@ -176,9 +176,10 @@ def postprocess(data):
     columns = data.columns
 
     # rescaling to orig range
-    for c in columns:
-        if c in feature_range.keys():
-            data_cleaned[c] = rescale(data_cleaned[c], (-1, 1), feature_range[c])
+    # for c in columns:
+    #     if c in feature_range.keys():
+    #         data_cleaned[c] = rescale(data_cleaned[c], (-1, 1), feature_range[c])
+    # return data_cleaned
     
     # # going back from numerical to categorical
     # data_cleaned.loc[data_cleaned['Aspiration rate Pre-therapy'] == 0, 'Aspiration rate Pre-therapy'] = 'N'
@@ -186,8 +187,11 @@ def postprocess(data):
 
 
 
+
 # OK
-    data_cleaned['clinical_AJCC_stage'] = 'NOS'
+    # data_cleaned['clinical_AJCC_stage'] = 'NOS'
+    new_data = pd.DataFrame({'clinical_AJCC_stage': 'NOS'}, index=data_cleaned.index)
+    data_cleaned = pd.concat([data_cleaned, new_data], axis=1)
     data_cleaned.loc[data_cleaned['clinical_AJCC_stage_IIB'] == 1, 'clinical_AJCC_stage'] = 'IIB'
     data_cleaned.loc[data_cleaned['clinical_AJCC_stage_IIA'] == 1, 'clinical_AJCC_stage'] = 'IIA'
     data_cleaned.loc[data_cleaned['clinical_AJCC_stage_II'] == 1, 'clinical_AJCC_stage'] = 'II'
@@ -203,7 +207,9 @@ def postprocess(data):
     
 
 # ok
-    data_cleaned['treatment_admin'] = 'NOS'
+    # data_cleaned['treatment_admin'] = 'NOS'
+    new_data = pd.DataFrame({'treatment_admin': 'NOS'}, index=data_cleaned.index)
+    data_cleaned = pd.concat([data_cleaned, new_data], axis=1)
     data_cleaned.loc[data_cleaned['intarvenous'] == 1, 'treatment_admin'] = 'intarvenous'
     data_cleaned.loc[data_cleaned['intramuscular'] == 1, 'treatment_admin'] = 'intramuscular'
     data_cleaned.loc[data_cleaned['oral'] == 1, 'treatment_admin'] = 'oral'
@@ -211,7 +217,9 @@ def postprocess(data):
         ['intarvenous', 'intramuscular', 'oral'], axis=1)
 
 
-    data_cleaned['Race'] = 'NOS'
+    # data_cleaned['Race'] = 'NOS'
+    new_data = pd.DataFrame({'Race': 'NOS'}, index=data_cleaned.index)
+    data_cleaned = pd.concat([data_cleaned, new_data], axis=1)
     data_cleaned.loc[data_cleaned['race_white'] == 1, 'Race'] = 'White'
     data_cleaned.loc[data_cleaned['race_hispanic'] == 1, 'Race'] = 'Hispanic'
     data_cleaned.loc[data_cleaned['race_black'] == 1, 'Race'] = 'Black'
@@ -221,7 +229,9 @@ def postprocess(data):
         ['race_white', 'race_hispanic', 'race_black', 'race_asian', 'race_mixed'], axis=1)
 
 
-    data_cleaned['preTrt_lymph_node_status'] = 'NOS'
+    # data_cleaned['preTrt_lymph_node_status'] = 'NOS'
+    new_data = pd.DataFrame({'preTrt_lymph_node_status': 'NOS'}, index=data_cleaned.index)
+    data_cleaned = pd.concat([data_cleaned, new_data], axis=1)
     data_cleaned.loc[data_cleaned['preTrt_lymph_node_status_N0'] == 1, 'preTrt_lymph_node_status'] = 'N0'
     data_cleaned.loc[data_cleaned['preTrt_lymph_node_status_N1'] == 1, 'preTrt_lymph_node_status'] = 'N1'
     data_cleaned.loc[data_cleaned['preTrt_lymph_node_status_N2'] == 1, 'preTrt_lymph_node_status'] = 'N2'
@@ -233,7 +243,9 @@ def postprocess(data):
 
 
 
-    data_cleaned['postTrt_lymph_node_status'] = 'NOS'
+    # data_cleaned['postTrt_lymph_node_status'] = 'NOS'
+    new_data = pd.DataFrame({'postTrt_lymph_node_status': 'NOS'}, index=data_cleaned.index)
+    data_cleaned = pd.concat([data_cleaned, new_data], axis=1)
     data_cleaned.loc[data_cleaned['postTrt_lymph_node_status_N0'] == 1, 'postTrt_lymph_node_status'] = 'N0'
     data_cleaned.loc[data_cleaned['postTrt_lymph_node_status_N1'] == 1, 'postTrt_lymph_node_status'] = 'N1'
     data_cleaned.loc[data_cleaned['postTrt_lymph_node_status_N1a'] == 1, 'postTrt_lymph_node_status'] = 'N1a'
@@ -245,7 +257,9 @@ def postprocess(data):
         ['postTrt_lymph_node_status_N0', 'postTrt_lymph_node_status_N1', 'postTrt_lymph_node_status_N1a', 'postTrt_lymph_node_status_N2', 'postTrt_lymph_node_status_N2a', 'postTrt_lymph_node_status_N3', 'postTrt_lymph_node_status_positive' ], axis=1)
 
 
-    data_cleaned['tumor_stage_postTrt'] = 'NOS'
+    # data_cleaned['tumor_stage_postTrt'] = 'NOS'
+    new_data = pd.DataFrame({'tumor_stage_postTrt': 'NOS'}, index=data_cleaned.index)
+    data_cleaned = pd.concat([data_cleaned, new_data], axis=1)
     data_cleaned.loc[data_cleaned['tumor_stage_postTrt_T0'] == 1, 'tumor_stage_postTrt'] = 'T0'
     data_cleaned.loc[data_cleaned['tumor_stage_postTrt_T1'] == 1, 'tumor_stage_postTrt'] = 'T1'
     data_cleaned.loc[data_cleaned['tumor_stage_postTrt_T2'] == 1, 'tumor_stage_postTrt'] = 'T2'
@@ -258,7 +272,9 @@ def postprocess(data):
         ['tumor_stage_postTrt_T0', 'tumor_stage_postTrt_T1', 'tumor_stage_postTrt_T2', 'tumor_stage_postTrt_T1a', 'tumor_stage_postTrt_T1b', 'tumor_stage_postTrt_Tis', 'tumor_stage_postTrt_T1mic', 'tumor_stage_postTrt_T1c' ], axis=1)
 
 
-    data_cleaned['tumor_stage_preTrt'] = 'NOS'
+    # data_cleaned['tumor_stage_preTrt'] = 'NOS'
+    new_data = pd.DataFrame({'tumor_stage_preTrt': 'NOS'}, index=data_cleaned.index)
+    data_cleaned = pd.concat([data_cleaned, new_data], axis=1)
     data_cleaned.loc[data_cleaned['tumor_stage_preTrt_T0'] == 1, 'tumor_stage_preTrt'] = 'T0'
     data_cleaned.loc[data_cleaned['tumor_stage_preTrt_T1'] == 1, 'tumor_stage_preTrt'] = 'T1'
     data_cleaned.loc[data_cleaned['tumor_stage_preTrt_T2'] == 1, 'tumor_stage_preTrt'] = 'T2'
@@ -268,7 +284,9 @@ def postprocess(data):
         ['tumor_stage_preTrt_T0', 'tumor_stage_preTrt_T1', 'tumor_stage_preTrt_T2', 'tumor_stage_preTrt_T3', 'tumor_stage_preTrt_T4'], axis=1)
 
 
-    data_cleaned['pam50'] = 'NOS'
+    # data_cleaned['pam50'] = 'NOS'
+    new_data = pd.DataFrame({'pam50': 'NOS'}, index=data_cleaned.index)
+    data_cleaned = pd.concat([data_cleaned, new_data], axis=1)
     data_cleaned.loc[data_cleaned['pam50_Basal'] == 1, 'pam50'] = 'Basal'
     data_cleaned.loc[data_cleaned['pam50_Claudin'] == 1, 'pam50'] = 'Claudin'
     data_cleaned.loc[data_cleaned['pam50_Her2'] == 1, 'pam50'] = 'Her2'
@@ -279,7 +297,9 @@ def postprocess(data):
         ['pam50_Basal', 'pam50_Claudin', 'pam50_Her2', 'pam50_Luminal A', 'pam50_Luminal B', 'pam50_Normal'], axis=1)
 
 
-    data_cleaned['pCR_spectrum'] = 'NOS'
+    # data_cleaned['pCR_spectrum'] = 'NOS'
+    new_data = pd.DataFrame({'pCR_spectrum': 'NOS'}, index=data_cleaned.index)
+    data_cleaned = pd.concat([data_cleaned, new_data], axis=1)
     data_cleaned.loc[data_cleaned['pCR_spectrum_CR'] == 1, 'pCR_spectrum'] = 'CR'
     data_cleaned.loc[data_cleaned['pCR_spectrum_EPD'] == 1, 'pCR_spectrum'] = 'EPD'
     data_cleaned.loc[data_cleaned['pCR_spectrum_NCR'] == 1, 'pCR_spectrum'] = 'NCR'
@@ -291,7 +311,9 @@ def postprocess(data):
         ['pCR_spectrum_CR', 'pCR_spectrum_EPD', 'pCR_spectrum_NCR', 'pCR_spectrum_NE', 'pCR_spectrum_PD', 'pCR_spectrum_PR', 'pCR_spectrum_SD'], axis=1)
 
 
-    data_cleaned['RCB'] = 'NOS'
+    # data_cleaned['RCB'] = 'NOS'
+    new_data = pd.DataFrame({'RCB': 'NOS'}, index=data_cleaned.index)
+    data_cleaned = pd.concat([data_cleaned, new_data], axis=1)
     data_cleaned.loc[data_cleaned['RCB_0'] == 1, 'RCB'] = '0'
     data_cleaned.loc[data_cleaned['RCB_1'] == 1, 'RCB'] = '1'
     data_cleaned.loc[data_cleaned['RCB_2'] == 1, 'RCB'] = '2'
@@ -303,14 +325,18 @@ def postprocess(data):
         ['RCB_0', 'RCB_1', 'RCB_2', 'RCB_3', 'RCB_0/I', 'RCB_II', 'RCB_III'], axis=1)
 
 
-    data_cleaned['menopausal_status'] = 'NOS'
+    # data_cleaned['menopausal_status'] = 'NOS'
+    new_data = pd.DataFrame({'menopausal_status': 'NOS'}, index=data_cleaned.index)
+    data_cleaned = pd.concat([data_cleaned, new_data], axis=1)
     data_cleaned.loc[data_cleaned['menopausal_status_post'] == 1, 'menopausal_status'] = 'post'
     data_cleaned.loc[data_cleaned['menopausal_status_pre'] == 1, 'menopausal_status'] = 'pre'
     data_cleaned = data_cleaned.drop(
         ['menopausal_status_post', 'menopausal_status_pre'], axis=1)
 
 
-    data_cleaned['HER2_IHC_score_preTrt'] = 'NOS'
+    # data_cleaned['HER2_IHC_score_preTrt'] = 'NOS'
+    new_data = pd.DataFrame({'HER2_IHC_score_preTrt': 'NOS'}, index=data_cleaned.index)
+    data_cleaned = pd.concat([data_cleaned, new_data], axis=1)
     data_cleaned.loc[data_cleaned['HER2_IHC_score_preTrt_0'] == 1, 'HER2_IHC_score_preTrt'] = '0'
     data_cleaned.loc[data_cleaned['HER2_IHC_score_preTrt_1'] == 1, 'HER2_IHC_score_preTrt'] = '1'
     data_cleaned.loc[data_cleaned['HER2_IHC_score_preTrt_2'] == 1, 'HER2_IHC_score_preTrt'] = '2'
@@ -321,7 +347,9 @@ def postprocess(data):
         ['HER2_IHC_score_preTrt_0', 'HER2_IHC_score_preTrt_1', 'HER2_IHC_score_preTrt_2', 'HER2_IHC_score_preTrt_3', 'HER2_IHC_score_preTrt_ND', 'HER2_IHC_score_preTrt_NEG'], axis=1)
 
 
-    data_cleaned['ploidy'] = 'NOS'
+    # data_cleaned['ploidy'] = 'NOS'
+    new_data = pd.DataFrame({'ploidy': 'NOS'}, index=data_cleaned.index)
+    data_cleaned = pd.concat([data_cleaned, new_data], axis=1)
     data_cleaned.loc[data_cleaned['ploidy_aneuploid'] == 1, 'ploidy'] = 'aneuploid'
     data_cleaned.loc[data_cleaned['ploidy_diploid'] == 1, 'ploidy'] = 'diploid'
     data_cleaned.loc[data_cleaned['ploidy_multiploid'] == 1, 'ploidy'] = 'multiploid'
@@ -330,7 +358,9 @@ def postprocess(data):
 
 
 
-    data_cleaned['estrogen_receptor'] = 'NOS'
+    # data_cleaned['estrogen_receptor'] = 'NOS'
+    new_data = pd.DataFrame({'estrogen_receptor': 'NOS'}, index=data_cleaned.index)
+    data_cleaned = pd.concat([data_cleaned, new_data], axis=1)
     data_cleaned.loc[data_cleaned['estrogen_receptor_blocker_and_stops_production'] == 1, 'estrogen_receptor'] = 'block_and_stop'
     data_cleaned.loc[data_cleaned['estrogen_receptor_blocker_and_eliminator'] == 1, 'estrogen_receptor'] = 'block_and_eliminate'
     data_cleaned = data_cleaned.drop(
@@ -338,14 +368,18 @@ def postprocess(data):
 
 
 
-    data_cleaned['surgery'] = 'NOS'
+    # data_cleaned['surgery'] = 'NOS'
+    new_data = pd.DataFrame({'surgery': 'NOS'}, index=data_cleaned.index)
+    data_cleaned = pd.concat([data_cleaned, new_data], axis=1)
     data_cleaned.loc[data_cleaned['surgery_breast preserving'] == 1, 'surgery'] = 'preserving'
     data_cleaned.loc[data_cleaned['surgery_mastectomy'] == 1, 'surgery'] = 'mastectomy'
     data_cleaned = data_cleaned.drop(
         ['surgery_breast preserving', 'surgery_mastectomy'], axis=1)
 
 
-    data_cleaned['therapy'] = 'NOS'
+    # data_cleaned['therapy'] = 'NOS'
+    new_data = pd.DataFrame({'therapy': 'NOS'}, index=data_cleaned.index)
+    data_cleaned = pd.concat([data_cleaned, new_data], axis=1)
     data_cleaned.loc[data_cleaned['neoadjuvant_or_adjuvant_adj'] == 1, 'therapy'] = 'adj'
     data_cleaned.loc[data_cleaned['neoadjuvant_or_adjuvant_mixed'] == 1, 'therapy'] = 'mixed'
     data_cleaned.loc[data_cleaned['neoadjuvant_or_adjuvant_neo'] == 1, 'therapy'] = 'neo'
@@ -354,12 +388,14 @@ def postprocess(data):
         ['neoadjuvant_or_adjuvant_adj', 'neoadjuvant_or_adjuvant_mixed', 'neoadjuvant_or_adjuvant_neo', 'neoadjuvant_or_adjuvant_unspecified'], axis=1)
     
     
-    data_cleaned['menopausal_status'] = 'NOS'
-    data_cleaned.loc[data_cleaned['menopausal_status_pre'] == 1, 'menopausal_status'] = 'pre'
-    data_cleaned.loc[data_cleaned['menopausal_status_post'] == 1, 'menopausal_status'] = 'post'
-    data_cleaned = data_cleaned.drop(
-        ['menopausal_status_pre', 'menopausal_status_post'], axis=1)
-# ok
+#     # data_cleaned['menopausal_status'] = 'NOS'
+#     new_data = pd.DataFrame({'menopausal_status': 'NOS'}, index=data_cleaned.index)
+#     data_cleaned = pd.concat([data_cleaned, new_data], axis=1)
+#     data_cleaned.loc[data_cleaned['menopausal_status_pre'] == 1, 'menopausal_status'] = 'pre'
+#     data_cleaned.loc[data_cleaned['menopausal_status_post'] == 1, 'menopausal_status'] = 'post'
+#     data_cleaned = data_cleaned.drop(
+#         ['menopausal_status_pre', 'menopausal_status_post'], axis=1)
+# # ok
 
 
     if 'surgery' in columns:
@@ -523,3 +559,9 @@ def postprocess(data):
 
 
     return data_cleaned
+
+
+data = pd.read_csv('processed_data.csv')
+data_cleaned = postprocess(data)
+
+data_cleaned.to_csv('dataset.csv', index=False)
